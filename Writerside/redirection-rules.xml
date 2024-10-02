@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rules SYSTEM "https://resources.jetbrains.com/writerside/1.0/redirection-rules.dtd">
+<rules>
+    <!-- format is as follows
+    <rule id="<unique id>">
+        <accepts>page.html</accepts>
+    </rule>
+    -->
+    <rule id="209871dd">
+        <description>Created after removal of "Reference" from docs</description>
+        <accepts>Reference.html</accepts>
+    </rule>
+    <rule id="3380f21b">
+        <description>Created after removal of "useInputField" from docs</description>
+        <accepts>Search.html</accepts>
+    </rule>
+    <rule id="243fbcf9">
+        <description>Created after removal of "Hooks" from docs</description>
+        <accepts>Hooks.html</accepts>
+    </rule>
+    <rule id="bad8091">
+        <description>Created after removal of "useCheckboxField" from docs</description>
+        <accepts>useCheckboxFieldAdapter.html</accepts>
+    </rule>
+    <rule id="6d619093">
+        <description>Created after removal of "useRadioGroupField" from docs</description>
+        <accepts>RadioGroupFieldAdapter.html</accepts>
+    </rule>
+    <rule id="39b8276">
+        <description>Created after removal of "useSelectField" from docs</description>
+        <accepts>useSelectField.html</accepts>
+    </rule>
+    <rule id="1b793c2b">
+        <description>Created after removal of "useTextareaField" from docs</description>
+        <accepts>useTextareaField.html</accepts>
+    </rule>
+    <rule id="2db60f91">
+        <description>Created after removal of "useInputField" from docs</description>
+        <accepts>useInputField.html</accepts>
+    </rule>
+</rules>

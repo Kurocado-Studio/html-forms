@@ -1,10 +1,14 @@
-// This configuration only applies to the package manager root.
-/** @type {import("eslint").Linter.Config} */
 module.exports = {
-  ignorePatterns: ["apps/**", "packages/**"],
-  extends: ["@repo/eslint-config/library.js"],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: true,
+  extends: [require.resolve('@kurocado-studio/style-guide/eslint/node')],
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['~', './src']],
+        extensions: ['.ts', '.tsx'],
+      },
+      typescript: {
+        project: require.resolve('./tsconfig.json'),
+      },
+    },
   },
 };

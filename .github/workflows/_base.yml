@@ -1,0 +1,40 @@
+name: Setup Workflow
+
+on:
+  workflow_call:
+    inputs:
+      node_version:
+        type: string
+        required: true
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node_version}}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies with pnpm
+        run: pnpm install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store # Path to pnpm store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }} # Cache key based on OS and lockfile hash
+          restore-keys: |
+            ${{ runner.os }}-pnpm-

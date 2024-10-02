@@ -1,3 +1,12 @@
 {
-  "extends": "@repo/typescript-config/base.json"
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "extends": "@kurocado-studio/style-guide/tsconfig/web",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "paths": { "~/*": ["./src/*"] },
+    "rootDir": "./src"
+  },
+  "exclude": ["node_modules"]
 }
