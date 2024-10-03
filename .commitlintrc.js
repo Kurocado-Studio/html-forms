@@ -1,1 +1,3 @@
-module.exports = require.resolve('@kurocado-studio/style-guide/commitlint');
+module.exports = {
+  extends: ['@kurocado-studio/style-guide/commitlint'],
+};
