@@ -15,10 +15,7 @@
   },
   "lint-staged": {
     "*": "prettier -w --ignore-unknown",
-    "src/**/*.{ts,tsx}": [
-      "npm run prettier-fix",
-      "npm run eslint-check"
-    ]
+    "src/**/*.{ts,tsx}": ["npm run prettier-fix", "npm run eslint-check"]
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
