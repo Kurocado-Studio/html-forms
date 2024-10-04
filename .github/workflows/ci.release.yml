@@ -7,12 +7,15 @@ permissions:
   id-token: write
 
 on:
-  workflow_call:
   push:
     branches:
       - main
 
 jobs:
+  code-quality:
+    uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
+    secrets: inherit
+
   manage-release:
     uses: kurocado-studio/styleguide/.github/workflows/release.yml@main
     secrets: inherit
