@@ -24,6 +24,6 @@ jobs:
           fetch-depth: 0
   ci-lint:
     uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
-    needs: [checkout]
+    needs: [actions/checkout@v1]
     secrets:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
