@@ -12,8 +12,9 @@ permissions:
   pull-requests: write
   id-token: write
 
+
 jobs:
-  lint:
+  checkout:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -21,8 +22,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
-      - name: Run Lint Workflow
-        uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
-        secrets:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ci-lint:
+    uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
+    needs: [checkout]
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
