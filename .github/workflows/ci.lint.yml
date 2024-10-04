@@ -8,6 +8,6 @@ on:
 
 jobs:
   ci-lint:
-    uses: 'kurocado-studio/styleguide/.github/workflows/lint.yml'
+    uses: 'kurocado-studio/styleguide/.github/workflows/lint.yml@latest'
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

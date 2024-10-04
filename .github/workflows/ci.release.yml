@@ -13,14 +13,14 @@ on:
 
 jobs:
   ci-release:
-    uses: 'kurocado-studio/styleguide/.github/workflows/release.yml'
+    uses: 'kurocado-studio/styleguide/.github/workflows/release.yml@latest'
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       PAT_FORCE_PUSH: ${{ secrets.GITHUB_TOKEN }}
 
   ci-documentation:
-    uses: 'kurocado-studio/styleguide/.github/workflows/documentation.yml'
+    uses: 'kurocado-studio/styleguide/.github/workflows/documentation.yml@latest'
     needs: [ci-release]
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
