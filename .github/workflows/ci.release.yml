@@ -1,4 +1,4 @@
-name: Release Workflow
+name: Release
 
 permissions:
   pull-requests: write
@@ -12,14 +12,14 @@ on:
       - main
 
 jobs:
-  code-quality:
+  lint:
     uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
     secrets: inherit
 
-  manage-release:
+  release:
     uses: kurocado-studio/styleguide/.github/workflows/release.yml@main
     secrets: inherit
 
-  generate-documentation:
+  documentation:
     uses: kurocado-studio/styleguide/.github/workflows/writerside-documentation.yml@main
     secrets: inherit
