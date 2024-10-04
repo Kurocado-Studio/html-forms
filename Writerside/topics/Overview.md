@@ -15,6 +15,12 @@ smoothly with the Epic Stack framework used at the studio.
 | Project Board | [](https://github.com/orgs/Kurocado-Studio/projects/3) |
 | NPM Registry  | [](https://github.com/orgs/Kurocado-Studio/projects/3) |
 
+## Dependencies
+
+| Name       |                                                   |
+| ---------- | ------------------------------------------------- |
+| styleguide | [](https://kurocado-studio.github.io/styleguide/) |
+
 ## Functional Requirements
 
 | Element      | Story                                                                                     | Description                                                                                                          | Common Use Cases                                       |
@@ -28,7 +34,7 @@ smoothly with the Epic Stack framework used at the studio.
 | `<datalist>` | [](https://github.com/orgs/Kurocado-Studio/projects/3/views/1?pane=issue&itemId=81957285) | Provides autocomplete options for inputs                                                                             | Search suggestions, common entries                     |
 | `<output>`   | [](https://github.com/orgs/Kurocado-Studio/projects/3/views/1?pane=issue&itemId=81957354) | Displays results of calculations or actions                                                                          | Dynamic form results                                   |
 | `<progress>` | [](https://github.com/orgs/Kurocado-Studio/projects/3/views/1?pane=issue&itemId=81959233) | Shows task progress                                                                                                  | File uploads, form submissions                         |
-| `<meter>`    |                                                                                           | Represents a scalar measurement within a range                                                                       | Disk usage, battery levels                             |
+| `<meter>`    | [](https://github.com/orgs/Kurocado-Studio/projects/3?pane=issue&itemId=81959430)         | Represents a scalar measurement within a range                                                                       | Disk usage, battery levels                             |
 
 ## Non Functional Requirements
 

@@ -1,3 +1,0 @@
-# useCheckboxField
-
-Start typing here...

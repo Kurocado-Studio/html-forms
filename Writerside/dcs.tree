@@ -3,8 +3,8 @@
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
 
 <instance-profile id="dcs"
-                 name="docs"
-                 start-page="starter-topic.md">
+                 name="Kurocado Studio / HTML Forms"
+                 start-page="Overview.md">
 
     <toc-element topic="Overview.md"/>
     <toc-element topic="A11y-testing-strategy.md"/>
