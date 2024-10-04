@@ -14,6 +14,15 @@ permissions:
 
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
   ci-lint:
     uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
+    needs: [checkout]
     secrets: inherit
