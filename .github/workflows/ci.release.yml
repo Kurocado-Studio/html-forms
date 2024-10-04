@@ -1,0 +1,22 @@
+name: Release Workflow
+
+permissions:
+  pull-requests: write
+  contents: write
+  pages: write
+  id-token: write
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - main
+
+jobs:
+  manage-release:
+    uses: kurocado-studio/styleguide/.github/workflows/release.yml@main
+    secrets: inherit
+
+  generate-documentation:
+    uses: kurocado-studio/styleguide/.github/workflows/documentation.yml@main
+    secrets: inherit
