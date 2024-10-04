@@ -1,3 +1,1 @@
-module.exports = require.resolve(
-  '@kurocado-studio/style-guide/semantic-release/npm',
-);
+module.exports = require.resolve('@kurocado-studio/style-guide/release/npm');
