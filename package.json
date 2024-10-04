@@ -21,8 +21,14 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.0.3",
+    "@commitlint/config-conventional": "^19.0.3",
     "@kurocado-studio/style-guide": "^1.0.0",
-    "husky": "^9.1.6"
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "prettier": "^3.3.3",
+    "semantic-release": "^23.0.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=20.0.0"
