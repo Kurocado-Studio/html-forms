@@ -1,0 +1,13 @@
+name: Code Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-lint:
+    uses: '@kurocado-studio/styleguide/.github/workflows/lint.yml@v1'
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

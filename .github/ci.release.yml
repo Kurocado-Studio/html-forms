@@ -1,0 +1,26 @@
+name: Release Workflow
+
+permissions:
+  pull-requests: write
+  contents: write
+  pages: write
+  id-token: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-release:
+    uses: '@kurocado-studio/styleguide/.github/workflows/release.yml@v1'
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      PAT_FORCE_PUSH: ${{ secrets.GITHUB_TOKEN }}
+
+  ci-documentation:
+    uses: '@kurocado-studio/styleguide/.github/workflows/documentation.yml@v1'
+    needs: [ci-release]
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

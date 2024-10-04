@@ -1,1 +1,1 @@
-module.exports = require('@kurocado-studio/style-guide/prettier');
+module.exports = require.resolve('@kurocado-studio/style-guide/prettier');
