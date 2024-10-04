@@ -18,5 +18,5 @@ jobs:
     secrets: inherit
 
   generate-documentation:
-    uses: kurocado-studio/styleguide/.github/workflows/writerside-documentation@main
+    uses: kurocado-studio/styleguide/.github/workflows/writerside-documentation.yml@main
     secrets: inherit
