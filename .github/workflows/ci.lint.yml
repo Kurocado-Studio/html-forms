@@ -1,6 +1,7 @@
 name: Code Quality
 
 on:
+  workflow_call:
   pull_request:
   push:
     branches:
@@ -16,4 +17,4 @@ jobs:
   ci-lint:
     uses: kurocado-studio/styleguide/.github/workflows/lint.yml@main
     secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
