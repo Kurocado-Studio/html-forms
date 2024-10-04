@@ -13,8 +13,26 @@ on:
       - main
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get composites
+        uses: actions/checkout@v2
+        with:
+          repository: kurocado-studio/styleguide
+          ref: main
+          token: ${{ secrets.PAT_TOKEN }}
+          path: .github/actions
+
   ci-release:
     uses: kurocado-studio/styleguide/.github/workflows/release.yml@main
+    needs: [checkout]
     secrets: inherit
 
   ci-documentation:
