@@ -15,13 +15,9 @@ on:
 jobs:
   ci-release:
     uses: kurocado-studio/styleguide/.github/workflows/release.yml@main
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      PAT_FORCE_PUSH: ${{ secrets.GH_TOKEN }}
+    secrets: inherit
 
   ci-documentation:
     uses: kurocado-studio/styleguide/.github/workflows/documentation.yml@main
     needs: [ci-release]
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    secrets: inherit
