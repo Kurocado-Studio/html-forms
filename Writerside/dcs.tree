@@ -9,4 +9,7 @@
     <toc-element topic="Overview.md"/>
     <toc-element topic="A11y-testing-strategy.md"/>
     <toc-element topic="NPM-Registry.md"/>
+    <toc-element topic="API.md">
+        <toc-element topic="useInputField.md"/>
+    </toc-element>
 </instance-profile>

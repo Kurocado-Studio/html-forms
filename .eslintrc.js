@@ -8,6 +8,12 @@ module.exports = {
     amd: true,
     node: true,
   },
+  parserOptions: {
+    ecmaVersion: 2020,
+    project: true,
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
+  },
   settings: {
     'import/resolver': {
       alias: {
@@ -19,4 +25,17 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: [
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        '**/__tests__/**/*.ts',
+        '**/__tests__/**/*.tsx',
+      ],
+      rules: {
+        '@typescript-eslint/no-unsafe-call': 'off',
+      },
+    },
+  ],
 };
