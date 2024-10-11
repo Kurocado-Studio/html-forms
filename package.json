@@ -11,7 +11,7 @@
     "prepare": "husky install",
     "prettier-check": "prettier --check .",
     "prettier-fix": "prettier --check . --write",
-    "test": "vitest && node --trace-warnings",
+    "test": "vitest",
     "coverage": "vitest run --coverage",
     "semantic-release": "semantic-release"
   },
@@ -43,8 +43,9 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@conform-to/react": "^1.2.2",
-    "@conform-to/zod": "^1.2.2",
+    "@conform-to/dom": "1.2.2",
+    "@conform-to/react": "1.2.2",
+    "@conform-to/zod": "1.2.2",
     "@react-aria/textfield": "^3.14.9",
     "@react-aria/utils": "^3.25.3",
     "lodash-es": "^4.17.21",

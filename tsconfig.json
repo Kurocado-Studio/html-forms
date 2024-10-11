@@ -1,14 +1,17 @@
 {
-  "include": ["./src/**/*.ts", "./src/**/*.tsx", "./vitest.config.ts", "./setup.react.ts"],
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./vitest.config.ts",
+    "./setup.react.ts"
+  ],
   "extends": "@kurocado-studio/style-guide/tsconfig/web",
   "compilerOptions": {
-    "allowJs": true,
     "baseUrl": ".",
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "noEmit": true,
     "paths": { "~/*": ["./src/*"] },
     "rootDir": "."
   },

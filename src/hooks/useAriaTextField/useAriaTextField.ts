@@ -1,79 +1,81 @@
-import {
-  FieldName,
-  FormId,
-  useField,
-  useInputControl,
-} from '@conform-to/react';
-import { AriaTextFieldProps, useTextField } from '@react-aria/textfield';
+import { useField, useInputControl } from '@conform-to/react';
+import { useTextField } from '@react-aria/textfield';
 import { mergeProps } from '@react-aria/utils';
 import get from 'lodash-es/get';
 import React, { useRef } from 'react';
 
-interface AriaTextFieldConfig<
-  FieldSchema,
-  FormSchema extends Record<string, unknown>,
-  FormError,
-> {
-  name: FieldName<FieldSchema, FormSchema, FormError>;
-  formId?: FormId<FormSchema, FormError>;
-  label?: string;
-  type?: string;
-}
-
-interface AriaTextFieldApi {
-  descriptionProps?: React.HTMLAttributes<HTMLDivElement>;
-  errorMessageProps?: React.HTMLAttributes<HTMLDivElement>;
-  inputProps: React.InputHTMLAttributes<HTMLInputElement>;
-  isInvalid: boolean;
-  labelProps: React.LabelHTMLAttributes<HTMLLabelElement> & { htmlFor: string };
-  validationDetails: ValidityState;
-  validationErrors: string[];
-}
+import {
+  AriaDescription,
+  AriaErrorMessage,
+  AriaInput,
+  AriaLabel,
+} from '../../models';
+import {
+  LabelProps,
+  TextFieldApi,
+  TextFieldMeta,
+  TextFieldProps,
+} from '../../types';
 
 export const useAriaTextField = <
   FieldSchema = string,
   FormSchema extends Record<string, unknown> = Record<string, unknown>,
   FormError = string[],
 >(
-  config: AriaTextFieldConfig<FieldSchema, FormSchema, FormError>,
-): AriaTextFieldApi => {
-  const { name, label, formId } = config;
+  config: TextFieldProps<FieldSchema, FormSchema, FormError>,
+  formMeta?: TextFieldMeta<FormSchema, FormError>,
+): TextFieldApi => {
+  const { name, label } = config;
 
   const inputRef: React.RefObject<HTMLInputElement> =
     useRef<HTMLInputElement>(null);
 
-  const [meta] = useField(name, { formId });
+  const [meta] = useField(name, formMeta);
+
   const control = useInputControl({
-    name: meta.name,
-    formId: meta.formId,
+    name: get(meta, ['name']),
+    formId: get(meta, ['formId']),
   });
 
-  const errorMessage = Array.isArray(meta.errors)
-    ? meta.errors.toString()
+  const required = get(config, ['isRequired'], false);
+
+  const metaErrors = Array.isArray(meta.errors) ? meta.errors : [];
+
+  const combinedErrors = config.errorMessage
+    ? [config.errorMessage, ...metaErrors]
+    : meta.errors;
+
+  const errorMessage = Array.isArray(combinedErrors)
+    ? combinedErrors.toString()
     : undefined;
 
-  const labelWithFallback = label
+  const labelOrFallback = label
     ? label
-    : `label-${get(meta, ['descriptionId'])}`;
+    : `label-${get(meta, ['descriptionId'], `descriptionId-${new Date().toISOString()}`)}`;
 
-  const ariaTextFieldProps: AriaTextFieldProps & { htmlFor: string } = {
-    label,
-    'aria-details': '',
-    htmlFor: labelWithFallback,
+  const ariaTextFieldProps: TextFieldProps<FieldSchema, FormSchema, FormError> &
+    LabelProps = {
     'aria-describedby': get(meta, ['descriptionId']),
+    'aria-details': get(config, ['aria-details']),
     'aria-errormessage': errorMessage,
-    'aria-label': labelWithFallback,
-    'aria-labelledby': labelWithFallback,
-    defaultValue: meta.initialValue as string,
-    errorMessage: Array.isArray(meta.errors)
-      ? meta.errors.toString()
-      : undefined,
-    isInvalid: meta.valid,
-    value: control.value as string,
-    onBlur: control.blur,
-    onChange: control.change,
-    validationBehavior: 'aria',
-    name: meta.name,
+    'aria-label': labelOrFallback,
+    'aria-labelledby': labelOrFallback,
+    autoCapitalize: get(config, ['autoCapitalize'], 'off'),
+    defaultValue: get(
+      config,
+      ['defaultValue'],
+      get(meta, ['initialValue']) as string,
+    ),
+    errorMessage,
+    htmlFor: labelOrFallback,
+    isInvalid: get(config, ['isInvalid'], get(meta, ['valid'])),
+    label,
+    name: get(meta, ['name'], name),
+    onBlur: get(control, ['blur']),
+    // @ts-expect-error we are relying on @conform/react to handle this
+    onChange: get(control, ['change']),
+    validationBehavior: get(config, ['validationBehavior'], 'aria'),
+    value: get(control, ['value']) as string,
   };
 
   const {
@@ -85,28 +87,36 @@ export const useAriaTextField = <
     validationDetails,
   } = useTextField(ariaTextFieldProps, inputRef);
 
-  const combinedInputProps = mergeProps(inputProps, {
-    ref: inputRef,
-  });
+  const combinedInputProps = mergeProps(
+    {
+      ...inputProps,
+      'aria-invalid': get(meta, ['valid']),
+      ref: inputRef,
+    },
+    {
+      ref: inputRef,
+    },
+  );
 
   return {
-    labelProps: {
+    labelProps: AriaLabel.create({
       ...labelProps,
-      htmlFor: labelWithFallback,
-    },
-    inputProps: combinedInputProps,
-    descriptionProps: {
+      children: get(config, ['label']),
+      htmlFor: labelOrFallback,
+      required,
+    }),
+    inputProps: AriaInput.create(combinedInputProps),
+    descriptionProps: AriaDescription.create({
       ...descriptionProps,
-      id: meta.descriptionId,
-    },
-    errorMessageProps: {
+      children: get(config, ['description']),
+      id: get(meta, ['descriptionId']),
+    }),
+    errorMessageProps: AriaErrorMessage.create({
       ...errorMessageProps,
-      id: meta.errorId,
-      children: validationErrors.length
-        ? validationErrors.toString()
-        : undefined,
-    },
-    isInvalid: meta.valid,
+      id: get(meta, ['errorId']),
+      children: errorMessage,
+    }),
+    isInvalid: get(meta, ['valid']),
     validationDetails,
     validationErrors,
   };

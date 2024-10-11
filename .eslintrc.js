@@ -16,6 +16,9 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
       alias: {
         map: [['~', './src']],
         extensions: ['.ts', '.tsx'],
@@ -35,6 +38,7 @@ module.exports = {
       ],
       rules: {
         '@typescript-eslint/no-unsafe-call': 'off',
+        'import/order': 'off',
       },
     },
   ],
