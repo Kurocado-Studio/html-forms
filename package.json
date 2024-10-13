@@ -11,6 +11,8 @@
     "prepare": "husky install",
     "prettier-check": "prettier --check .",
     "prettier-fix": "prettier --check . --write",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "semantic-release": "semantic-release"
   },
   "lint-staged": {
@@ -23,14 +25,34 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
     "@commitlint/config-conventional": "^19.0.3",
-    "@kurocado-studio/style-guide": "^1.0.0",
+    "@kurocado-studio/style-guide": "^2.0.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^4.3.2",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "prettier": "^3.3.3",
     "semantic-release": "^23.0.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.2",
+    "vitest-axe": "^0.1.0"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@conform-to/dom": "1.2.2",
+    "@conform-to/react": "1.2.2",
+    "@conform-to/zod": "1.2.2",
+    "@react-aria/textfield": "^3.14.9",
+    "@react-aria/utils": "^3.25.3",
+    "clsx": "^2.1.1",
+    "lodash-es": "^4.17.21",
+    "react": "^18.3.1"
+  },
+  "peerDependencies": {
+    "tailwind": "^4.0.0"
   }
 }

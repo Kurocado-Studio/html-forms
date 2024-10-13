@@ -8,8 +8,20 @@ module.exports = {
     amd: true,
     node: true,
   },
+  parserOptions: {
+    ecmaVersion: 2020,
+    project: true,
+    sourceType: 'module',
+    tsconfigRootDir: __dirname,
+  },
+  rules: {
+    'import/no-cycle': 'off',
+  },
   settings: {
     'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
       alias: {
         map: [['~', './src']],
         extensions: ['.ts', '.tsx'],
@@ -19,4 +31,18 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: [
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        '**/__tests__/**/*.ts',
+        '**/__tests__/**/*.tsx',
+      ],
+      rules: {
+        '@typescript-eslint/no-unsafe-call': 'off',
+        'import/order': 'off',
+      },
+    },
+  ],
 };
