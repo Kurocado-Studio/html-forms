@@ -1,42 +1,42 @@
+import { useField } from '@conform-to/react';
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
 import { TextFieldProps } from '../../types';
 import { TestForm } from '../../utils/TestForm';
 import { testA11y } from '../../utils/a11yTestUtils';
-import { mockFieldMetadata } from '../../utils/mockConformUtils';
+import {
+  mockFieldMetadata,
+  mockFormMetadata,
+} from '../../utils/mockConformUtils';
 import { useAriaTextField } from './useAriaTextField';
 
-const useField = vi.fn();
-const useInputControl = vi.fn();
-
-vi.doMock('@conform-to/react', () => ({
-  useField,
-  useInputControl,
-}));
+vi.mock('@conform-to/react', async () => {
+  return {
+    ...(await vi.importActual('@conform-to/react')),
+    useField: vi.fn(),
+    useInputControl: vi.fn(),
+  };
+});
 
 describe('useAriaTextField Hook - Accessibility Tests', () => {
+  const useFieldMock = useField as Mock<typeof useField>;
+
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
   it('should have no accessibility violations with default props', async () => {
-    useField.mockReturnValue([
-      {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
-        errors: [],
         valid: true,
         descriptionId: 'desc-id',
         errorId: 'error-id',
         initialValue: '',
-      },
+      }),
+      mockFormMetadata(),
     ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
 
     const results = await testA11y(
       <SampleComponent name='test' label='Test Label' />,
@@ -47,22 +47,16 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
   });
 
   it('should have no accessibility violations when there is an error', async () => {
-    useField.mockReturnValue([
-      {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
         errors: ['Field is required'],
         valid: false,
         descriptionId: 'desc-id',
         errorId: 'error-id',
-        initialValue: '',
-      },
+      }),
+      mockFormMetadata(),
     ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
 
     const results = await testA11y(
       <SampleComponent
@@ -77,22 +71,15 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
   });
 
   it('should associate label and input correctly', () => {
-    useField.mockReturnValue([
-      {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
-        errors: [],
         valid: true,
         descriptionId: 'desc-id',
         errorId: 'error-id',
-        initialValue: '',
-      },
+      }),
+      mockFormMetadata(),
     ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
 
     render(
       <TestForm>
@@ -105,22 +92,15 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
   });
 
   it('should include aria-describedby when description is provided', () => {
-    useField.mockReturnValue([
+    useFieldMock.mockReturnValue([
       mockFieldMetadata({
         name: 'test',
-        errors: [],
         valid: true,
         descriptionId: 'desc-id',
         errorId: 'error-id',
-        initialValue: '',
       }),
+      mockFormMetadata(),
     ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
 
     render(
       <TestForm>
@@ -141,30 +121,20 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
   });
 
   it('should include aria-errormessage when there is an error', () => {
-    useField.mockReturnValue([
-      {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
         errors: ['Error message'],
         valid: false,
         descriptionId: 'desc-id',
         errorId: 'error-id',
-        initialValue: '',
-      },
+      }),
+      mockFormMetadata(),
     ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
 
     render(
       <TestForm>
-        <SampleComponent
-          name='test'
-          label='Test Label'
-          errorMessage='Error message'
-        />
+        <SampleComponent name='test' label='Test Label' />
       </TestForm>,
     );
 

@@ -1,6 +1,5 @@
 import { FieldName, FormValue } from '@conform-to/dom';
 import { FieldMetadata, FormMetadata } from '@conform-to/react';
-import { useInputControl } from '@conform-to/react/integrations';
 import get from 'lodash-es/get';
 import { vi } from 'vitest';
 
@@ -73,22 +72,5 @@ export const mockFormMetadata = <
     validate: vi.fn(),
     // @ts-expect-error we are mocking this
     value: get(config, ['value']),
-  };
-};
-
-export const mockInputControl = <
-  Value extends string | string[] | (string | undefined)[],
->(
-  params?: Partial<Parameters<typeof useInputControl<Value>>>,
-): ReturnType<typeof useInputControl<Value>> => {
-  return {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    value: get(params, [0, 'value'], ''),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    change: get(params, [0, 'change'], vi.fn()),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    focus: get(params, [0, 'focus'], vi.fn()),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    blur: get(params, [0, 'blur'], vi.fn()),
   };
 };

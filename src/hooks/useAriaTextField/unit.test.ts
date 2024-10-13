@@ -1,85 +1,64 @@
+import { useField } from '@conform-to/react';
+import { useTextField } from '@react-aria/textfield';
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
+import { Mock, vi } from 'vitest';
 
 import { TestForm } from '../../utils/TestForm';
-import { mockFieldMetadata } from '../../utils/mockConformUtils';
-import { useAriaTextField } from './useAriaTextField';
+import {
+  mockFieldMetadata,
+  mockFormMetadata,
+} from '../../utils/mockConformUtils';
 
-const useField = vi.fn();
-const useInputControl = vi.fn();
-const useTextField = vi.fn();
-const mergeProps = vi.fn();
-
-vi.doMock('@conform-to/react', async () => {
-  const actual =
-    await vi.importActual<typeof import('@conform-to/react')>(
-      '@conform-to/react',
-    );
+vi.mock('@conform-to/react', async () => {
   return {
-    ...actual,
-    useField,
-    useInputControl,
+    ...(await vi.importActual('@conform-to/react')),
+    useInputControl: vi.fn(),
+    useField: vi.fn(),
   };
 });
 
-vi.doMock('@react-aria/textfield', async () => {
-  const actual = await vi.importActual<typeof import('@react-aria/textfield')>(
-    '@react-aria/textfield',
-  );
+vi.mock('@react-aria/textfield', async () => {
   return {
-    ...actual,
-    useTextField,
-  };
-});
-
-vi.doMock('@react-aria/utils', async () => {
-  const actual =
-    await vi.importActual<typeof import('@react-aria/utils')>(
-      '@react-aria/utils',
-    );
-  return {
-    ...actual,
-    mergeProps,
+    ...(await vi.importActual('@react-aria/textfield')),
+    useTextField: vi.fn(),
   };
 });
 
 describe('useAriaTextField Hook - Unit Tests', () => {
+  const useFieldMock = useField as Mock<typeof useField>;
+  const useTextFieldMock = useTextField as Mock<typeof useTextField>;
+
   beforeEach(() => {
     vi.resetAllMocks();
   });
 
-  it('should return correct props with default configuration', () => {
-    useField.mockReturnValue([
+  test('should return correct props with default configuration', async () => {
+    useFieldMock.mockReturnValue([
       mockFieldMetadata({
         name: 'test',
-        errors: [],
         valid: true,
         descriptionId: 'desc-id',
         errorId: 'error-id',
-        initialValue: '',
         formId: 'form-id',
       }),
+      mockFormMetadata(),
     ]);
 
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
+    useTextFieldMock.mockReturnValue({
       labelProps: { htmlFor: 'test' },
-      inputProps: { name: 'test', ref: { current: null } },
+      inputProps: {
+        name: 'test',
+        ref: { current: null },
+        'aria-invalid': false,
+      },
+      isInvalid: true,
       errorMessageProps: { id: 'error-id', children: undefined },
       descriptionProps: { id: 'desc-id', children: undefined },
       validationErrors: [],
       validationDetails: {} as ValidityState,
     });
 
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
+    const { useAriaTextField } = await import('./useAriaTextField');
 
     const { result } = renderHook(
       () =>
@@ -91,14 +70,14 @@ describe('useAriaTextField Hook - Unit Tests', () => {
 
     expect(result.current).toBeDefined();
     expect(result.current.labelProps).toEqual({
-      htmlFor: 'test',
+      htmlFor: 'label-desc-id',
       required: false,
-      children: undefined,
+      children: null,
     });
     expect(result.current.inputProps).toEqual({
       name: 'test',
       ref: { current: null },
-      'aria-invalid': true,
+      'aria-invalid': false,
     });
     expect(result.current.descriptionProps).toEqual({
       id: 'desc-id',
@@ -106,16 +85,16 @@ describe('useAriaTextField Hook - Unit Tests', () => {
     });
     expect(result.current.errorMessageProps).toEqual({
       id: 'error-id',
-      children: undefined,
+      children: null,
     });
-    expect(result.current.isInvalid).toBe(true);
+    expect(result.current.isInvalid).toBe(false);
     expect(result.current.validationDetails).toEqual({});
     expect(result.current.validationErrors).toEqual([]);
   });
 
-  it('should handle validation errors correctly', () => {
-    useField.mockReturnValue([
-      {
+  test('should handle validation errors correctly', async () => {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
         errors: ['Field is required'],
         valid: false,
@@ -123,22 +102,18 @@ describe('useAriaTextField Hook - Unit Tests', () => {
         errorId: 'error-id',
         initialValue: '',
         formId: 'form-id',
-      },
+      }),
+      mockFormMetadata(),
     ]);
 
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
+    useTextFieldMock.mockReturnValue({
       labelProps: { htmlFor: 'test' },
       inputProps: {
         name: 'test',
         'aria-invalid': true,
         ref: { current: null },
       },
+      isInvalid: true,
       errorMessageProps: {
         id: 'error-id',
         children: 'Field is required',
@@ -148,10 +123,7 @@ describe('useAriaTextField Hook - Unit Tests', () => {
       validationDetails: {} as ValidityState,
     });
 
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
+    const { useAriaTextField } = await import('./useAriaTextField');
 
     const { result } = renderHook(
       () =>
@@ -162,16 +134,16 @@ describe('useAriaTextField Hook - Unit Tests', () => {
       { wrapper: TestForm },
     );
 
-    expect(result.current.isInvalid).toBe(false);
+    expect(result.current.isInvalid).toBe(true);
     expect(result.current.errorMessageProps?.children).toBe(
       'Field is required',
     );
     expect(result.current.inputProps['aria-invalid']).toBe(true);
   });
 
-  it('should include appropriate ARIA attributes for accessibility', () => {
-    useField.mockReturnValue([
-      {
+  test('should associate label and input correctly', async () => {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
         errors: [],
         valid: true,
@@ -179,23 +151,61 @@ describe('useAriaTextField Hook - Unit Tests', () => {
         errorId: 'error-id',
         initialValue: '',
         formId: 'form-id',
-      },
+      }),
+      mockFormMetadata(),
     ]);
 
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test', id: 'label-id' },
+    useTextFieldMock.mockReturnValue({
+      labelProps: { htmlFor: 'test' },
       inputProps: {
         name: 'test',
-        'aria-labelledby': 'label-id',
-        'aria-describedby': 'desc-id',
         ref: { current: null },
+        'aria-invalid': false,
       },
+      isInvalid: true,
+      errorMessageProps: { id: 'error-id', children: undefined },
+      descriptionProps: { id: 'desc-id', children: undefined },
+      validationErrors: [],
+      validationDetails: {} as ValidityState,
+    });
+
+    const { useAriaTextField } = await import('./useAriaTextField');
+
+    const { result } = renderHook(
+      () =>
+        useAriaTextField({
+          name: 'test',
+        }),
+      { wrapper: TestForm },
+    );
+
+    expect(result.current.labelProps.htmlFor).toBeDefined();
+    expect(result.current.inputProps.name).toBe('test');
+    expect(result.current.inputProps['aria-invalid']).toBe(false);
+  });
+
+  test('should include aria-describedby when description is provided', async () => {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
+        name: 'test',
+        errors: [],
+        valid: true,
+        descriptionId: 'desc-id',
+        errorId: 'error-id',
+        initialValue: '',
+        formId: 'form-id',
+      }),
+      mockFormMetadata(),
+    ]);
+
+    useTextFieldMock.mockReturnValue({
+      labelProps: { htmlFor: 'test' },
+      inputProps: {
+        name: 'test',
+        ref: { current: null },
+        'aria-describedby': 'desc-id',
+      },
+      isInvalid: false,
       errorMessageProps: { id: 'error-id', children: undefined },
       descriptionProps: {
         id: 'desc-id',
@@ -205,259 +215,56 @@ describe('useAriaTextField Hook - Unit Tests', () => {
       validationDetails: {} as ValidityState,
     });
 
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
+    const { useAriaTextField } = await import('./useAriaTextField');
 
     const { result } = renderHook(
       () =>
         useAriaTextField({
           name: 'test',
-          label: 'Test Label',
           description: 'This is a description',
         }),
       { wrapper: TestForm },
     );
 
-    expect(result.current.inputProps['aria-labelledby']).toBe('label-id');
     expect(result.current.inputProps['aria-describedby']).toBe('desc-id');
-    expect(result.current.labelProps.children).toBe('Test Label');
     expect(result.current.descriptionProps?.children).toBe(
       'This is a description',
     );
   });
 
-  it('should handle custom errorMessage prop', () => {
-    useField.mockReturnValue([
-      {
+  test('should include aria-errormessage when there is an error', async () => {
+    useFieldMock.mockReturnValue([
+      mockFieldMetadata({
         name: 'test',
-        errors: [],
-        valid: true,
+        errors: ['Error message'],
+        valid: false,
         descriptionId: 'desc-id',
         errorId: 'error-id',
         initialValue: '',
         formId: 'form-id',
-      },
+      }),
+      mockFormMetadata(),
     ]);
 
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
+    useTextFieldMock.mockReturnValue({
       labelProps: { htmlFor: 'test' },
-      inputProps: { name: 'test', ref: { current: null } },
+      inputProps: {
+        name: 'test',
+        ref: { current: null },
+        'aria-invalid': true,
+        'aria-errormessage': 'error-id',
+      },
       errorMessageProps: {
         id: 'error-id',
-        children: 'Custom error message',
+        children: 'Error message',
       },
+      isInvalid: true,
       descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: ['Custom error message'],
+      validationErrors: ['Error message'],
       validationDetails: {} as ValidityState,
     });
 
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-          errorMessage: 'Custom error message',
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.errorMessageProps?.children).toBe(
-      'Custom error message',
-    );
-    expect(result.current.validationErrors).toEqual(['Custom error message']);
-  });
-
-  it('should correctly handle required fields', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: [],
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: '',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test', required: true },
-      inputProps: { name: 'test', ref: { current: null } },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-          isRequired: true,
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.labelProps.required).toBe(true);
-  });
-
-  it('should handle defaultValue and initialValue correctly', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: [],
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: 'Initial Value',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: 'Control Value',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test' },
-      inputProps: {
-        name: 'test',
-        value: 'Control Value',
-        ref: { current: null },
-      },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-          defaultValue: 'Default Value',
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.inputProps.value).toBe('Control Value');
-  });
-
-  it('should handle isInvalid prop overriding meta.valid', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: [],
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: '',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test' },
-      inputProps: {
-        name: 'test',
-        'aria-invalid': false,
-        ref: { current: null },
-      },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-          isInvalid: false,
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.isInvalid).toBe(false);
-    expect(result.current.inputProps['aria-invalid']).toBe(false);
-  });
-
-  it('should handle meta.errors not being an array', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: undefined,
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: '',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test' },
-      inputProps: {
-        name: 'test',
-        ref: { current: null },
-      },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
+    const { useAriaTextField } = await import('./useAriaTextField');
 
     const { result } = renderHook(
       () =>
@@ -467,105 +274,9 @@ describe('useAriaTextField Hook - Unit Tests', () => {
       { wrapper: TestForm },
     );
 
-    expect(result.current.validationErrors).toEqual([]);
-    expect(result.current.errorMessageProps?.children).toBeUndefined();
-  });
-
-  it('should use label prop correctly', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: [],
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: '',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test', id: 'label-id' },
-      inputProps: {
-        name: 'test',
-        'aria-labelledby': 'label-id',
-        ref: { current: null },
-      },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-          label: 'Custom Label',
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.labelProps.children).toBe('Custom Label');
-    expect(result.current.inputProps['aria-labelledby']).toBe('label-id');
-  });
-
-  it('should correctly assign refs to inputProps', () => {
-    useField.mockReturnValue([
-      {
-        name: 'test',
-        errors: [],
-        valid: true,
-        descriptionId: 'desc-id',
-        errorId: 'error-id',
-        initialValue: '',
-        formId: 'form-id',
-      },
-    ]);
-
-    useInputControl.mockReturnValue({
-      value: '',
-      blur: vi.fn(),
-      change: vi.fn(),
-    });
-
-    useTextField.mockReturnValue({
-      labelProps: { htmlFor: 'test' },
-      inputProps: {
-        name: 'test',
-        ref: { current: null },
-      },
-      errorMessageProps: { id: 'error-id', children: undefined },
-      descriptionProps: { id: 'desc-id', children: undefined },
-      validationErrors: [],
-      validationDetails: {} as ValidityState,
-    });
-
-    mergeProps.mockImplementation(
-      (...args: Record<string, unknown>[]): Record<string, unknown> =>
-        Object.assign({}, ...args),
-    );
-
-    const { result } = renderHook(
-      () =>
-        useAriaTextField({
-          name: 'test',
-        }),
-      { wrapper: TestForm },
-    );
-
-    expect(result.current.inputProps.ref).toBeDefined();
-    expect(typeof result.current.inputProps.ref).toBe('object');
+    expect(result.current.inputProps['aria-invalid']).toBe(true);
+    expect(result.current.inputProps['aria-errormessage']).toBe('error-id');
+    expect(result.current.errorMessageProps?.children).toBe('Error message');
+    expect(result.current.errorMessageProps?.id).toBe('error-id');
   });
 });

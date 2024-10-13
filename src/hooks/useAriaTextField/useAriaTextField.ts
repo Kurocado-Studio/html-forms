@@ -68,7 +68,7 @@ export const useAriaTextField = <
     ),
     errorMessage,
     htmlFor: labelOrFallback,
-    isInvalid: get(config, ['isInvalid'], get(meta, ['valid'])),
+    isInvalid: get(config, ['isInvalid'], !get(meta, ['valid'])),
     label,
     name: get(meta, ['name'], name),
     onBlur: get(control, ['blur']),
@@ -90,7 +90,7 @@ export const useAriaTextField = <
   const combinedInputProps = mergeProps(
     {
       ...inputProps,
-      'aria-invalid': get(meta, ['valid']),
+      'aria-invalid': !get(meta, ['valid']),
       ref: inputRef,
     },
     {
@@ -116,7 +116,7 @@ export const useAriaTextField = <
       id: get(meta, ['errorId']),
       children: errorMessage,
     }),
-    isInvalid: get(meta, ['valid']),
+    isInvalid: !get(meta, ['valid']),
     validationDetails,
     validationErrors,
   };
