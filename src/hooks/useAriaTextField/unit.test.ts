@@ -3,6 +3,7 @@ import { useTextField } from '@react-aria/textfield';
 import { renderHook } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
 
+import { AriaValidityState } from '../../models';
 import { TestForm } from '../../utils/TestForm';
 import {
   mockFieldMetadata,
@@ -88,7 +89,9 @@ describe('useAriaTextField Hook - Unit Tests', () => {
       children: null,
     });
     expect(result.current.isInvalid).toBe(false);
-    expect(result.current.validationDetails).toEqual({});
+    expect(result.current.validationDetails).toEqual(
+      AriaValidityState.create(),
+    );
     expect(result.current.validationErrors).toEqual([]);
   });
 

@@ -9,6 +9,7 @@ import {
   AriaErrorMessage,
   AriaInput,
   AriaLabel,
+  AriaValidityState,
 } from '../../models';
 import {
   LabelProps,
@@ -117,7 +118,7 @@ export const useAriaTextField = <
       children: errorMessage,
     }),
     isInvalid: !get(meta, ['valid']),
-    validationDetails,
+    validationDetails: AriaValidityState.create(validationDetails),
     validationErrors,
   };
 };
