@@ -2,14 +2,10 @@ import { useField } from '@conform-to/react';
 import { render, screen } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
 
-import { TextFieldProps } from '../../types';
-import { TestForm } from '../../utils/TestForm';
-import { testA11y } from '../../utils/a11yTestUtils';
-import {
-  mockFieldMetadata,
-  mockFormMetadata,
-} from '../../utils/mockConformUtils';
-import { useAriaTextField } from './useAriaTextField';
+import { AriaTextField } from '~/components/AriaTextField';
+import { TestForm } from '~/utils/TestForm';
+import { testA11y } from '~/utils/a11yTestUtils';
+import { mockFieldMetadata, mockFormMetadata } from '~/utils/mockConformUtils';
 
 vi.mock('@conform-to/react', async () => {
   return {
@@ -39,7 +35,7 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
     ]);
 
     const results = await testA11y(
-      <SampleComponent name='test' label='Test Label' />,
+      <AriaTextField name='test' label='Test Label' />,
       TestForm,
     );
 
@@ -59,7 +55,7 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
     ]);
 
     const results = await testA11y(
-      <SampleComponent
+      <AriaTextField
         name='test'
         label='Test Label'
         errorMessage='Field is required'
@@ -83,7 +79,7 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
 
     render(
       <TestForm>
-        <SampleComponent name='test' label='Test Label' />
+        <AriaTextField name='test' label='Test Label' />
       </TestForm>,
     );
 
@@ -104,7 +100,7 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
 
     render(
       <TestForm>
-        <SampleComponent
+        <AriaTextField
           name='test'
           label='Test Label'
           description='This is a description'
@@ -134,7 +130,7 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
 
     render(
       <TestForm>
-        <SampleComponent name='test' label='Test Label' />
+        <AriaTextField name='test' label='Test Label' />
       </TestForm>,
     );
 
@@ -147,21 +143,3 @@ describe('useAriaTextField Hook - Accessibility Tests', () => {
     expect(errorMessage.id).toBe('error-id');
   });
 });
-
-function SampleComponent(props: TextFieldProps) {
-  const { labelProps, inputProps, errorMessageProps, descriptionProps } =
-    useAriaTextField(props);
-
-  return (
-    <div>
-      <label {...labelProps}>{labelProps.children}</label>
-      <input {...inputProps} />
-      {descriptionProps?.children ? (
-        <div {...descriptionProps}>{descriptionProps.children}</div>
-      ) : null}
-      {errorMessageProps?.children ? (
-        <div {...errorMessageProps}>{errorMessageProps.children}</div>
-      ) : null}
-    </div>
-  );
-}

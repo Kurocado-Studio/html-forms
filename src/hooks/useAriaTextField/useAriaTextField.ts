@@ -10,13 +10,13 @@ import {
   AriaInput,
   AriaLabel,
   AriaValidityState,
-} from '../../models';
+} from '~/models';
 import {
   LabelProps,
   TextFieldApi,
   TextFieldMeta,
   TextFieldProps,
-} from '../../types';
+} from '~/types';
 
 export const useAriaTextField = <
   FieldSchema = string,

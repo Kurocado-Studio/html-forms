@@ -94,7 +94,6 @@ export class AriaValidityState implements ValidityStateProps {
   valid = true;
   valueMissing = false;
   id = '';
-  children = null;
 
   public static create = (
     validityStateProps?: Partial<ValidityStateProps>,

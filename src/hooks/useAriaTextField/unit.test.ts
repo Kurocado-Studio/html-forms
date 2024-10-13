@@ -3,12 +3,9 @@ import { useTextField } from '@react-aria/textfield';
 import { renderHook } from '@testing-library/react';
 import { Mock, vi } from 'vitest';
 
-import { AriaValidityState } from '../../models';
-import { TestForm } from '../../utils/TestForm';
-import {
-  mockFieldMetadata,
-  mockFormMetadata,
-} from '../../utils/mockConformUtils';
+import { AriaValidityState } from '~/models';
+import { TestForm } from '~/utils/TestForm';
+import { mockFieldMetadata, mockFormMetadata } from '~/utils/mockConformUtils';
 
 vi.mock('@conform-to/react', async () => {
   return {

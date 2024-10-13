@@ -48,7 +48,11 @@
     "@conform-to/zod": "1.2.2",
     "@react-aria/textfield": "^3.14.9",
     "@react-aria/utils": "^3.25.3",
+    "clsx": "^2.1.1",
     "lodash-es": "^4.17.21",
     "react": "^18.3.1"
+  },
+  "peerDependencies": {
+    "tailwind": "^4.0.0"
   }
 }
