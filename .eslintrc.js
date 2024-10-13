@@ -14,6 +14,9 @@ module.exports = {
     sourceType: 'module',
     tsconfigRootDir: __dirname,
   },
+  rules: {
+    'import/no-cycle': 'off',
+  },
   settings: {
     'import/resolver': {
       node: {
